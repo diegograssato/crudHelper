@@ -4,7 +4,8 @@
  * @author Diego Pereira Grassato
  * @site http://diegograssato.wordpress.com
  * @version 1.1 beta
- * @description
+ * @description Plugin feito para melhorar acessibilidade e elegância em cruds em ZF2 com bootstrap.
+ * @subDescription Conta com recursos como janela modal e busca com URL's amigáveis.
  */
 
 $(document).ready(function() {
