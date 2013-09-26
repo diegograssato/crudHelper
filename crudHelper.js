@@ -8,7 +8,7 @@
  * @subDescription Conta com recursos como janela modal e busca com URL's amigáveis.
  */
 
-$(document).ready(function() {
+(function($){
     /**
      * Variaveis padrão do plugin
      * @type {{msg: string, class: string, filtro: string, controller: string, busca: string}}
@@ -33,26 +33,29 @@ $(document).ready(function() {
         idModal: "#delete-confirm",
         class: '.delete-confirm',
         idDelete: '#deleteDTuX'
-      }
+    }
 
     var methods = {
         init : function( options ) {
             console.log("TuX");
         },
 
+        /**
+         * Cria o modal utilizando bootstrap personalizavel segundo as informações em defaultsDelete
+         * @returns {string}
+         */
         createModal : function() {
-            /** Cria o modal utilizando bootstrap personalizavel segundo as informacoes em defaultsDelete  */
             var html  = '<div class="modal fade" id='+ defaultsDelete.idModal.replace('#', '') +'>';
-            html += '<div class="modal-header">';
-            html += '<a class="close" data-dismiss="modal">×</a>';
-            html += '<h3>'+ defaultsDelete.title +'</h3></div>';
-            html += '<div class="modal-body"><p>'+ defaultsDelete.body +'</p>';
-            html += '<p id="legend"></p></div>';
-            html += '<div class="modal-footer">';
-            html += '<a class="btn btn-danger" id="'+ defaultsDelete.idDelete.replace('#', '') +'" href="#"><i class="icon-trash icon-white"></i> '+ defaultsDelete.deleteButton +'</a>';
-            html += '<a href="#" data-dismiss="modal" class="btn"> '+ defaultsDelete.deleteCancel +'</a>';
-            html += '</div>';
-            html += '</div>';
+                html += '<div class="modal-header">';
+                html += '<a class="close" data-dismiss="modal">×</a>';
+                html += '<h3>'+ defaultsDelete.title +'</h3></div>';
+                html += '<div class="modal-body"><p>'+ defaultsDelete.body +'</p>';
+                html += '<p id="legend"></p></div>';
+                html += '<div class="modal-footer">';
+                html += '<a class="btn btn-danger" id="'+ defaultsDelete.idDelete.replace('#', '') +'" href="#"><i class="icon-trash icon-white"></i> '+ defaultsDelete.deleteButton +'</a>';
+                html += '<a href="#" data-dismiss="modal" class="btn"> '+ defaultsDelete.deleteCancel +'</a>';
+                html += '</div>';
+                html += '</div>';
             return html;
         },
         /**
@@ -128,7 +131,7 @@ $(document).ready(function() {
         {
             if (e.keyCode == 13)
             {
-                if (this.value)
+                if (this.value.length > 0)
                 {
                     location.assign( settings.controller  + "/" + methods.findElements(settings.filtro)).trim();
                 } else {
@@ -144,33 +147,28 @@ $(document).ready(function() {
      * Plugin para realizar busca, funcionar com button
      */
     jQuery.fn.buscaBtn = function( settings ){
-
         var $this = jQuery( this );
         settings = jQuery.extend(defaults, settings);
         $this.click(function(e)
         {
-            if ($(settings.busca).val())
+            if ($(settings.busca).val().length > 0)
             {
                 location.href = settings.controller  + "/" + methods.findElements(settings.filtro);
             } else {
                 methods.msg(settings.msg);
                 $($this).focus();
             }
-
         });
-
         return $this;
     }
 
     jQuery.fn.delete = function(arrayFilds, settings ){
-        var $this = jQuery( this );
         settings = jQuery.extend(defaultsDelete, settings);
         methods.initDelete();
         $(this).click(function(e){
             e.preventDefault();
-
-            var str = " ";
             if(arrayFilds){
+                var str = " ";
                 for(var i = 0; i < arrayFilds.length; i++){
                     var fild = $(this).attr(arrayFilds[i]);
                     if(fild != ""){
@@ -180,15 +178,14 @@ $(document).ready(function() {
                 }
                 $("#legend").html(str.slice(0, -2));
             }
-
-            if($(this).attr('href')){
+            if($(this).attr('href').length > 0){
                 var link = $(this).attr('href');
                 $(settings.idDelete).removeAttr( "href" ).attr({ 'href': link});
                 $(settings.idModal).modal('show');
             }
         });
-        return $this;
     }
 
-});
+}(jQuery));
+
 
