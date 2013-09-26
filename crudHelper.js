@@ -11,7 +11,7 @@
 $(document).ready(function() {
     /**
      * Variaveis padrão do plugin
-     * @type {{msg: string, default: string, active: string, filtro: string, controller: string}}
+     * @type {{msg: string, class: string, filtro: string, controller: string, busca: string}}
      */
     var defaults = {
         msg: "O campos deve ser preenchido!",
@@ -21,6 +21,10 @@ $(document).ready(function() {
         busca: '#busca'
 
     }
+    /**
+     * Variaveis padrão do plugin
+     * @type {{title: string, body: string, deleteButton: string, deleteCancel: string, idModal: string, class: string, idDelete: string}}
+     */
     var defaultsDelete = {
         title: "Excluir item?",
         body: "Deseja realmente excluir este item?",
@@ -45,20 +49,23 @@ $(document).ready(function() {
             html += '<div class="modal-body"><p>'+ defaultsDelete.body +'</p>';
             html += '<p id="legend"></p></div>';
             html += '<div class="modal-footer">';
-            html += '<a class="btn btn-danger" id="'+ defaultsDelete.idDelete +'" href="#"><i class="icon-trash icon-white"></i> '+ defaultsDelete.deleteButton +'</a>';
+            html += '<a class="btn btn-danger" id="'+ defaultsDelete.idDelete.replace('#', '') +'" href="#"><i class="icon-trash icon-white"></i> '+ defaultsDelete.deleteButton +'</a>';
             html += '<a href="#" data-dismiss="modal" class="btn"> '+ defaultsDelete.deleteCancel +'</a>';
             html += '</div>';
             html += '</div>';
             return html;
         },
-
+        /**
+         * Inicializa o modal utilizando bootstrap
+         */
         initDelete : function() {
-            /**  Cria o modal utilizando bootstrap e anexa ao body */
             $("body").append(methods.createModal());
         },
-
+        /**
+         * Div de display para a mensagem
+         * @param elemento
+         */
         createAlert : function(elemento) {
-            /** Div de display para a mensagem  */
             var html  = '<div class="alert" style="display: none;margin-top: 20px"></div>';
             if(elemento != null){
                 $(elemento).append(html);
@@ -69,6 +76,7 @@ $(document).ready(function() {
 
         /**
          * Função que obtem os elementos que são membros da classe ".filtro"
+         * @param classFiltro(filtro para boter o elemento para busca de valores)
          * @returns {string}
          */
         findElements :  function( classFiltro ) {
@@ -94,11 +102,10 @@ $(document).ready(function() {
             jQuery(".alert").empty().fadeIn("slow")
                 .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
                 .append("<b><span>" + msg + "</span></b>");
-                setTimeout(function () {
-                    jQuery(".alert").fadeOut('slow').delay(100).remove();
+            setTimeout(function () {
+                jQuery(".alert").fadeOut('slow').delay(100).remove();
             }, 3200);
         },
-
         /**
          * Limpa elementos
          * @param str
@@ -108,11 +115,11 @@ $(document).ready(function() {
         {
             return str.replace(/^\s+|\s+$/g,"");
         }
-
     };
 
     /**
      * Plugin para realizar busca, funcionar com input's
+     * @param settings(configurações basicas, OPCIONAL)
      */
     jQuery.fn.buscaTxt = function( settings ){
         var $this = jQuery( this );
@@ -155,33 +162,33 @@ $(document).ready(function() {
         return $this;
     }
 
-    /**
-     * Plugin para realizar remocao com Modal do bootstrap
-     */
-    jQuery.fn.delete = function( settings ){
-
+    jQuery.fn.delete = function(arrayFilds, settings ){
         var $this = jQuery( this );
         settings = jQuery.extend(defaultsDelete, settings);
         methods.initDelete();
-
-          $(this).click(function(e){
+        $(this).click(function(e){
             e.preventDefault();
 
-            if($(this).attr('title')){
-                var title = $(this).attr('title');
-                $("#legend").html(title);
+            var str = " ";
+            if(arrayFilds){
+                for(var i = 0; i < arrayFilds.length; i++){
+                    var fild = $(this).attr(arrayFilds[i]);
+                    if(fild != ""){
+                        var fildName = arrayFilds[i].replace('data-', '');
+                        str += fildName.charAt(0).toUpperCase() + fildName.slice(1).toLowerCase()+ ": " + fild + " - ";
+                    }
+                }
+                $("#legend").html(str.slice(0, -2));
             }
+
             if($(this).attr('href')){
                 var link = $(this).attr('href');
                 $(settings.idDelete).removeAttr( "href" ).attr({ 'href': link});
                 $(settings.idModal).modal('show');
             }
-
         });
-
         return $this;
     }
 
-
-
 });
+
