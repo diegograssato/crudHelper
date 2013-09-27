@@ -11,16 +11,18 @@
 (function($){
     /**
      * Variaveis padrão do plugin
-     * @type {{msg: string, class: string, filtro: string, controller: string, busca: string}}
+     * @type {{msg: string, class: string, filtro: string, controller: string, busca: string, validacao: boolean, alertClass: alert-info, alert-success, alert-error  }
      */
     var defaults = {
         msg: "O campos deve ser preenchido!",
         class: '.default',
         filtro: '.filtro',
         controller: '/default',
-        busca: '#busca'
-
+        busca: '#busca',
+        validacao: true,
+        alertClass: "alert-error"
     }
+
     /**
      * Variaveis padrão do plugin
      * @type {{title: string, body: string, deleteButton: string, deleteCancel: string, idModal: string, class: string, idDelete: string}}
@@ -58,18 +60,20 @@
                 html += '</div>';
             return html;
         },
+
         /**
          * Inicializa o modal utilizando bootstrap
          */
         initDelete : function() {
             $("body").append(methods.createModal());
         },
+
         /**
          * Div de display para a mensagem
          * @param elemento
          */
         createAlert : function(elemento) {
-            var html  = '<div class="alert" style="display: none;margin-top: 20px"></div>';
+            var html  = '<div style="display: none;margin-top: 5px;margin-bottom: 2px" class="alert '+ defaults.alertClass +'"></div>';
             if(elemento != null){
                 $(elemento).append(html);
             }else{
@@ -84,7 +88,7 @@
          */
         findElements :  function( classFiltro ) {
             var url = new String();
-            $(classFiltro).each(function (index)
+            $(classFiltro).each(function ()
             {
                 valorID = $(this).attr("id");
                 valorTxt = $(this).val();
@@ -99,16 +103,21 @@
          *  Função que exibe mensagem personlizadas, é necessário uma div com class "alert"
          * @param msg
         */
-        msg : function (msg)
+        alert : function (msg)
         {
             this.createAlert();
-            jQuery(".alert").empty().fadeIn("slow")
-                .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
-                .append("<b><span>" + msg + "</span></b>");
-            setTimeout(function () {
-                jQuery(".alert").fadeOut('slow').delay(100).remove();
-            }, 3200);
+            if($(".alert").text() == ""){
+                jQuery(".alert").empty().fadeIn("slow")
+                    .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+                    .append("<b><span>" + msg + "</span></b>");
+                jQuery(".alert").delay(2000).fadeOut('slow');
+                setTimeout(function () {
+                    jQuery(".alert").remove();
+                }, 3500);
+            }
+
         },
+
         /**
          * Limpa elementos
          * @param str
@@ -135,8 +144,10 @@
                 {
                     location.assign( settings.controller  + "/" + methods.findElements(settings.filtro)).trim();
                 } else {
-                    methods.msg(settings.msg);
-                    $($this).focus();
+                    if(settings.validacao){
+                        methods.alert(settings.msg,settings.alertClass);
+                        $($this).focus();
+                    }
                 }
             }
         });
@@ -155,8 +166,10 @@
             {
                 location.href = settings.controller  + "/" + methods.findElements(settings.filtro);
             } else {
-                methods.msg(settings.msg);
-                $($this).focus();
+                if(settings.validacao){
+                    methods.alert(settings.msg,settings.alertClass);
+                    $($this).focus();
+                }
             }
         });
         return $this;
