@@ -19,7 +19,7 @@
         filtro: '.filtro',
         controller: '/default',
         busca: '#busca',
-        validacao: true,
+        validacao: false,
         alertClass: "alert-error"
     }
 
@@ -142,7 +142,7 @@
             {
                 if (this.value.length > 0)
                 {
-                    location.assign( settings.controller  + "/" + methods.findElements(settings.filtro)).trim();
+                    location.assign( settings.controller  + "/" + methods.findElements(settings.filtro).trim());
                 } else {
                     if(settings.validacao){
                         methods.alert(settings.msg,settings.alertClass);
@@ -164,7 +164,7 @@
         {
             if ($(settings.busca).val().length > 0)
             {
-                location.href = settings.controller  + "/" + methods.findElements(settings.filtro);
+                location.assign( settings.controller  + "/" + methods.findElements(settings.filtro).trim());
             } else {
                 if(settings.validacao){
                     methods.alert(settings.msg,settings.alertClass);
