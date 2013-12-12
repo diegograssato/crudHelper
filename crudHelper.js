@@ -9,6 +9,7 @@
  */
 
 (function($){
+
     /**
      * Variaveis padrão do plugin
      * @type {{msg: string, class: string, filtro: string, controller: string, busca: string, validacao: boolean, alertClass: alert-info, alert-success, alert-error  }
@@ -20,7 +21,7 @@
         controller: '/default',
         busca: '#busca',
         validacao: false,
-        alertClass: "alert-error"
+        alertClass: "alert-danger"
     }
 
     /**
@@ -46,20 +47,42 @@
          * Cria o modal utilizando bootstrap personalizavel segundo as informações em defaultsDelete
          * @returns {string}
          */
-        createModal : function() {
+        createModal2 : function() {
             var html  = '<div class="modal fade" id='+ defaultsDelete.idModal.replace('#', '') +'>';
-                html += '<div class="modal-header">';
-                html += '<a class="close" data-dismiss="modal">×</a>';
-                html += '<h3>'+ defaultsDelete.title +'</h3></div>';
-                html += '<div class="modal-body"><p>'+ defaultsDelete.body +'</p>';
-                html += '<p id="legend"></p></div>';
-                html += '<div class="modal-footer">';
-                html += '<a class="btn btn-danger" id="'+ defaultsDelete.idDelete.replace('#', '') +'" href="#"><i class="icon-trash icon-white"></i> '+ defaultsDelete.deleteButton +'</a>';
-                html += '<a href="#" data-dismiss="modal" class="btn"> '+ defaultsDelete.deleteCancel +'</a>';
-                html += '</div>';
-                html += '</div>';
+            html += '<div class="modal-header">';
+            html += '<a class="close" data-dismiss="modal">×</a>';
+            html += '<h3>'+ defaultsDelete.title +'</h3></div>';
+            html += '<div class="modal-body"><p>'+ defaultsDelete.body +'</p>';
+            html += '<p id="legend"></p></div>';
+            html += '<div class="modal-footer">';
+            html += '<a class="btn btn-danger" id="'+ defaultsDelete.idDelete.replace('#', '') +'" href="#"><i class="icon-trash icon-white"></i> '+ defaultsDelete.deleteButton +'</a>';
+            html += '<a href="#" data-dismiss="modal" class="btn"> '+ defaultsDelete.deleteCancel +'</a>';
+            html += '</div>';
+            html += '</div>';
             return html;
         },
+        createModal : function() {
+            var html  = '<div class="modal fade" id='+ defaultsDelete.idModal.replace('#', '') +'  role="dialog" aria-labelledby="'+ defaultsDelete.title +'" aria-hidden="true">';
+            html += '   <div class="modal-dialog">';
+            html += '        <div class="modal-content">';
+            html += '            <div class="modal-header">';
+            html += '                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
+            html += '                <h4 class="modal-title">'+ defaultsDelete.title +'</h4>';
+            html += '            </div>';
+            html += '            <div class="modal-body">';
+            html += '            <p>'+ defaultsDelete.body +'</p>';
+            html += '            <p id="legend"></p>';
+            html += '            </div>';
+            html += '            <div class="modal-footer">';
+            html += '               <a class="btn btn-danger" id="'+ defaultsDelete.idDelete.replace('#', '') +'" href="#"><i class="glyphicon glyphicon-remove"></i> '+ defaultsDelete.deleteButton +'</a>';
+            html += '               <a href="#" data-dismiss="modal" class="btn  btn-default"> '+ defaultsDelete.deleteCancel +'</a>';
+            html += '           </div>';
+            html += '        </div>';
+            html += '    </div>';
+            html += '</div>';
+            return html;
+        },
+
 
         /**
          * Inicializa o modal utilizando bootstrap
@@ -73,7 +96,8 @@
          * @param elemento
          */
         createAlert : function(elemento) {
-            var html  = '<div style="display: none;margin-top: 5px;margin-bottom: 2px" class="alert '+ defaults.alertClass +'"></div>';
+            var html  = '<div id="alert" style="margin-top: 5px;margin-bottom: 2px" class="alert '+ defaults.alertClass +'"></div>';
+            //var html  = '<div class="alert alert-dismissable"></div>';
             if(elemento != null){
                 $(elemento).append(html);
             }else{
@@ -102,13 +126,13 @@
         /**
          *  Função que exibe mensagem personlizadas, é necessário uma div com class "alert"
          * @param msg
-        */
+         */
         alert : function (msg)
         {
             this.createAlert();
-            if($(".alert").text() == ""){
+            if($(".alert").text() != msg){
                 jQuery(".alert").empty().fadeIn("slow")
-                    .append('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+                    .append('<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>')
                     .append("<b><span>" + msg + "</span></b>");
                 jQuery(".alert").delay(2000).fadeOut('slow');
                 setTimeout(function () {
@@ -147,6 +171,8 @@
                     if(settings.validacao){
                         methods.alert(settings.msg,settings.alertClass);
                         $($this).focus();
+                    }else{
+                        location.assign( settings.controller);
                     }
                 }
             }
@@ -169,6 +195,8 @@
                 if(settings.validacao){
                     methods.alert(settings.msg,settings.alertClass);
                     $($this).focus();
+                }else{
+                    location.assign( settings.controller);
                 }
             }
         });
